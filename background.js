@@ -7,6 +7,8 @@ chrome.runtime.onInstalled.addListener(() => {
   });
 });
 
+const MAX_LIST_SIZE = 1000; // popup.jsの設定と同期
+
 chrome.contextMenus.onClicked.addListener((info, tab) => {
   if (info.menuItemId === "block-booth-shop") {
     if (!info.linkUrl) return;
@@ -24,8 +26,27 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
       }
 
       if (shopId) {
+        // 文字数制限（念のため）
+        if (shopId.length > 50) {
+          console.warn('ショップIDが長すぎます。');
+          return;
+        }
+
         chrome.storage.local.get({ ngShops: [] }, (data) => {
           const list = data.ngShops || [];
+          
+          // 件数上限チェック
+          if (list.length >= MAX_LIST_SIZE && !list.includes(shopId)) {
+            chrome.notifications.create({
+              type: 'basic',
+              iconUrl: 'icon128.png',
+              title: '登録上限到達',
+              message: `登録上限（${MAX_LIST_SIZE}件）に達しているため、ブロックできませんでした。不要なものを削除してください。`,
+              priority: 2
+            });
+            return;
+          }
+
           if (!list.includes(shopId)) {
             list.push(shopId);
             chrome.storage.local.set({ ngShops: list });

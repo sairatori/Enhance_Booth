@@ -1,3 +1,6 @@
+const MAX_ITEM_LENGTH = 50; // 1アイテムあたりの最大文字数
+const MAX_LIST_SIZE = 1000; // 登録できる最大件数
+
 document.addEventListener('DOMContentLoaded', () => {
   const wordListEl = document.getElementById('word-list');
   const shopListEl = document.getElementById('shop-list');
@@ -66,8 +69,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const value = inputEl.value.trim();
     if (!value) return;
 
+    // 文字数制限チェック
+    if (value.length > MAX_ITEM_LENGTH) {
+      alert(`文字数が長すぎます（最大${MAX_ITEM_LENGTH}文字）。`);
+      return;
+    }
+
     chrome.storage.local.get({ [storageKey]: [] }, (data) => {
       const list = data[storageKey] || [];
+      
+      // 登録件数制限チェック
+      if (list.length >= MAX_LIST_SIZE && !list.includes(value)) {
+        alert(`登録上限（${MAX_LIST_SIZE}件）に達しています。不要なものを削除してください。`);
+        return;
+      }
+
       if (!list.includes(value)) {
         list.push(value);
         chrome.storage.local.set({ [storageKey]: list }, () => {

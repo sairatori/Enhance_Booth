@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Booth Search & Display Improver",
+  "name": "Enhance_Booth",
   "version": "1.0",
   "description": "BOOTHの検索・表示体験を改善する拡張機能。NGワードの除外やURLクエリの自動付与を行います。",
   "content_scripts": [
@@ -19,9 +19,13 @@
   ],
   "permissions": [
     "storage",
-    "contextMenus"
+    "contextMenus",
+    "notifications"
   ],
   "action": {
     "default_popup": "popup.html"
+  },
+  "icons": {
+    "128": "icon128.png"
   }
 }

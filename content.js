@@ -1,4 +1,6 @@
 // content.js
+const MAX_ITEM_LENGTH = 50; // popup.jsの設定と同期
+const MAX_LIST_SIZE = 1000; // popup.jsの設定と同期
 
 let NG_WORDS = [];
 let NG_SHOPS = [];
@@ -152,7 +154,7 @@ function cleanTitle(titleEl) {
   
   const originalHTML = titleEl.innerHTML;
   
-  // 初期の安全な置換ロジック（spanで囲んでCSSで隠す方式）に戻す
+  // 初期の安全な置換ロジック（spanで囲んでCSSで隠す方式）を採用
   // これにより、bodyクラスの着脱だけでON/OFFが瞬時に反映される
   const bracketNoiseRegex = /([【\[［(（<〈][^】\]］)）>〉]*?(?:セール中|期間限定|割引|対応)[】\]］)）>〉])/g;
   const symbolNoiseRegex = /([♦♥★✨■])/g;
@@ -254,12 +256,12 @@ function processCards(cards) {
       card.remove();
     } else {
       card.dataset.boothFilterProcessed = 'true';
-      card.dataset.boothShopIdentifier = shopIdentifier; // ソート用
+      card.dataset.boothShopIdentifier = shopIdentifier; // ショップIDをデータ属性に保持（ソート用）
       
       const blockTarget = shopText.trim() || shopIdentifier;
       injectQuickMuteButton(card, blockTarget, shopText);
       
-      // 2列レイアウト有効時は、URL注入のみ実行（レイアウトはCSSが貴任する）
+      // 2列レイアウト有効時は、URL注入のみ実行（レイアウトはCSSが責任を持つ）
       if (enable2Col) {
         injectThumbnailUrls(card);
       }
@@ -309,7 +311,7 @@ function sortContainers(cards) {
       }
     }
 
-    // マルチプルを被りが多い順に昇順ソート（多いやつほど最下部に行くように）
+    // 重複が多いショップを最下部へ移動させるために昇順ソート
     multiples.sort((a, b) => a.count - b.count);
 
     // DOMへ再配置
@@ -349,6 +351,19 @@ function injectQuickMuteButton(card, blockTarget, shopText) {
     
     chrome.storage.local.get({ ngShops: [] }, (data) => {
       const list = data.ngShops || [];
+      
+      // バリデーション：文字数制限
+      if (blockTarget.length > MAX_ITEM_LENGTH) {
+        console.warn('ショップ名が長すぎます。');
+        return;
+      }
+      
+      // バリデーション：件数上限チェック
+      if (list.length >= MAX_LIST_SIZE && !list.includes(blockTarget)) {
+        console.warn('登録上限に達しているため、ブロックできませんでした。');
+        return;
+      }
+
       if (!list.includes(blockTarget)) {
         list.push(blockTarget);
         chrome.storage.local.set({ ngShops: list }, () => {
