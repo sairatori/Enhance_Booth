@@ -1,0 +1,27 @@
+{
+  "manifest_version": 3,
+  "name": "Booth Search & Display Improver",
+  "version": "1.0",
+  "description": "BOOTHの検索・表示体験を改善する拡張機能。NGワードの除外やURLクエリの自動付与を行います。",
+  "content_scripts": [
+    {
+      "matches": ["*://*.booth.pm/*"],
+      "js": ["content.js"],
+      "css": ["content.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "host_permissions": [
+    "*://*.booth.pm/*"
+  ],
+  "permissions": [
+    "storage",
+    "contextMenus"
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  }
+}

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="popup.css">
+  <title>Booth Search & Display Improver</title>
+</head>
+
+<body>
+  <div class="header">
+    <h1>BOOTH Filter Settings</h1>
+  </div>
+
+  <div class="container">
+    <div class="section">
+      <h2>UI・表示設定</h2>
+      <div class="toggle-row">
+        <span class="toggle-text">2列グリッドレイアウト (検索結果のみ)</span>
+        <label class="switch">
+          <input type="checkbox" id="toggle-2col">
+          <span class="slider round"></span>
+        </label>
+      </div>
+      <div class="toggle-row">
+        <span class="toggle-text">商品名の宣伝ノイズを隠す</span>
+        <label class="switch">
+          <input type="checkbox" id="toggle-clean-title">
+          <span class="slider round"></span>
+        </label>
+      </div>
+      <div class="toggle-row">
+        <span class="toggle-text">『「VRChat」の人気作品』を非表示</span>
+        <label class="switch">
+          <input type="checkbox" id="toggle-hide-vrchat">
+          <span class="slider round"></span>
+        </label>
+      </div>
+      <p class="caption">詳細ページ下部の「VRChat」の人気作品セクションを隠します</p>
+    </div>
+
+    <div class="section">
+      <h2>NGワード (タイトル)</h2>
+      <div class="input-group">
+        <input type="text" id="new-word" placeholder="フィルタリングしたいワード">
+        <button id="add-word-btn" class="btn-primary">追加</button>
+      </div>
+      <ul id="word-list" class="item-list"></ul>
+    </div>
+
+    <div class="section">
+      <h2>NGショップ (名前またはID)</h2>
+      <p style="font-size: 10px; margin: 0 0 10px 0;">ショップ名の右クリックや、アイテムの×ボタンからも追加可能です</p>
+      <div class="input-group">
+        <input type="text" id="new-shop" placeholder="ショップの名前またはID">
+        <button id="add-shop-btn" class="btn-primary">追加</button>
+      </div>
+      <ul id="shop-list" class="item-list"></ul>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+
+</html>

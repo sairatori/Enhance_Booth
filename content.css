@@ -1,0 +1,174 @@
+/* content.css */
+.booth-filter-quick-mute {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 24px;
+  height: 24px;
+  background-color: rgba(0, 0, 0, 0.4);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 24px;
+  text-align: center;
+  cursor: pointer;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.2s, background-color 0.2s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+}
+
+li.item-card:hover .booth-filter-quick-mute,
+.item-card-wrapper:hover .booth-filter-quick-mute,
+.l-card:hover .booth-filter-quick-mute,
+[class*="card"]:hover .booth-filter-quick-mute {
+  opacity: 1;
+}
+
+.booth-filter-quick-mute:hover {
+  background-color: #fc4d50;
+}
+
+/* タイトルノイズ除去のスタイル */
+body.booth-ext-clean-title .booth-ext-noise {
+  display: none !important;
+}
+
+/* ============================================================
+   2列モード: 親ボックスのレスポンシブ制約解除
+   ポイント：:has(.item-card) で「アイテムカードを含む要素のみ」を
+   狙い撃ちにし、サイドバーなど他のUI要素には一切触れない。
+   ============================================================ */
+
+/* [depth 9] div.page-wrap
+   Tailwind min-w-[970px] で min-width: 970px が固定 → 解除 */
+body.booth-ext-2col .page-wrap {
+  min-width: 0 !important;
+  overflow-x: hidden !important;
+}
+
+/* アイテムカードを「直接・または間接的に」内包するすべての祖先要素に対して
+   幅の固定制約を解除する。:has() を使うことでサイドバーには当たらない。 */
+body.booth-ext-2col *:has(> .item-card),
+body.booth-ext-2col *:has(> * > .item-card),
+body.booth-ext-2col *:has(> * > * > .item-card),
+body.booth-ext-2col *:has(> * > * > * > .item-card),
+body.booth-ext-2col *:has(> * > * > * > * > .item-card) {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* ============================================================
+   2列グリッド本体
+   ul.l-cards-5cols / アイテムカードの直接親 を grid に変換
+   ============================================================ */
+body.booth-ext-2col ul:has(> .item-card),
+body.booth-ext-2col div:has(> .item-card),
+body.booth-ext-2col .l-cards-5cols,
+body.booth-ext-2col [class*="grid-cols-5"] {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 16px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* li.item-card: BOOTHデフォルトの inline-block / max-width:20% を上書き */
+body.booth-ext-2col .item-card {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+}
+
+/* カードの中身を縦積み（画像エリア → テキストエリア） */
+body.booth-ext-2col .item-card__wrap {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+}
+
+/* 画像エリアを横いっぱいに広げる */
+body.booth-ext-2col .item-card__thumbnail {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  flex-shrink: 1 !important;
+  aspect-ratio: auto !important;
+  padding: 0 !important;
+  /* Booth標準の padding-top: 100% を無効化 */
+  height: auto !important;
+  overflow: hidden !important;
+}
+
+/* 画像エリアの横展開コンテナ */
+body.booth-ext-2col .item-card__thumbnail-images {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: flex-start !important;
+  /* 縦に引き伸ばされないように */
+  width: 100% !important;
+  min-width: 0 !important;
+  gap: 4px !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+/* Booth標準の padding-top: 100% アスペクト比ハック（::after）を強制無効化 */
+body.booth-ext-2col .item-card__thumbnail-images::after,
+body.booth-ext-2col .js-thumbnail-image::after {
+  display: none !important;
+}
+
+/* 各サムネイル画像——CSSが全責任を持つ */
+body.booth-ext-2col .js-thumbnail-image {
+  position: relative !important;
+  /* BOOTHの position:absolute を強制上書き */
+  display: block !important;
+  /* Tailwind !hidden を上書き */
+  flex: 1 1 0 !important;
+  /* 2枚が均等に縮小・拡大する */
+  min-width: 0 !important;
+  max-width: 50% !important;
+  aspect-ratio: 1 / 1 !important;
+  /* 常に正方形 */
+  height: auto !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+/* 3枚目以降は非表示（最大2枚まで表示） */
+body.booth-ext-2col .js-thumbnail-image:nth-child(n+3) {
+  display: none !important;
+}
+
+/* テキストエリアの調整 */
+body.booth-ext-2col .item-card__summary {
+  width: 100% !important;
+  padding: 12px 0 0 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* タイトルの横幅が5列サイズで折り返さないように強制拡張 */
+body.booth-ext-2col .item-card__title,
+body.booth-ext-2col .item-card__title-anchor--multiline,
+body.booth-ext-2col .item-card__title-anchor {
+  width: 100% !important;
+  max-width: none !important;
+}
